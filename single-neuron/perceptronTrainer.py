@@ -3,8 +3,8 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-datafile = "adelaide_weather_dataset.csv"
-weightsfile = "weights.json"
+datafile = "single-neuron\\adelaide_weather_dataset.csv"
+weightsfile = "single-neuron\\weights.json"
 
 # Import data
 df = pd.read_csv(datafile)

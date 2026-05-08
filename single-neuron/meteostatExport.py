@@ -7,10 +7,10 @@ LONGITUDE = 138.60000
 
 # Date range
 START_DATE = "2023-12-31"
-END_DATE = "2025-12-31"
+END_DATE = "2025-12-28"
 
 # Output
-datafile = "adelaide_weather_dataset.csv"
+datafile = "single-neuron\\adelaide_weather_dataset.csv"
 
 url = (
     "https://archive-api.open-meteo.com/v1/archive?"
