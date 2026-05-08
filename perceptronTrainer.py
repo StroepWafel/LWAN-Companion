@@ -1,0 +1,66 @@
+import json
+import pandas as pd
+import numpy as np
+
+datafile = "adelaide_weather_dataset.csv"
+weightsfile = "weights.json"
+
+
+# Import data
+df = pd.read_csv(datafile)
+
+# Initialise weights
+b = 0
+global w
+w = np.array([0, 0, 0, 0])
+
+# Learning rate
+n = 0.01
+
+
+# Statistics
+global failcount 
+failcount = 0
+global successcount
+successcount = 0
+
+# Train on every row of data
+for row in df.itertuples():
+    # Inputs
+    temperature = row.temperature
+    humidity = row.humidity
+    pressure = row.pressure
+    wind_speed = row.wind_speed
+    # Expected output
+    rain = row.rain
+
+    # Create vector x
+    x = np.array([temperature, humidity, pressure, wind_speed])
+    # Create output
+    z = x.dot(w) + b
+
+    
+    y = 1 if (z >= 0) else 0
+
+    w = w + n * (rain - y) * x #type: ignore
+    b = b + n * (rain - y) #type: ignore
+    if (rain == y):
+        successcount += 1
+    else:
+        failcount += 1
+
+    print(f"Predicted {'rain' if y else 'no rain'}, Expected {'rain' if rain else 'no rain'}. New weights: {w.tolist()}")
+
+
+print(f"Succeeded {successcount} times, Failed {failcount} times.")
+
+print("Saving final weights to file...")
+try:
+    with open(weightsfile, "w") as file:
+        json.dump(w.tolist(), file)
+        print(f"Successfully saved weights {w.tolist()} to `{file.name}`")
+except Exception as e:
+    print(f"Failed to write weights to file: {e}")
+
+
+
