@@ -17,6 +17,7 @@ w = np.array([0, 0, 0, 0])
 # Learning rate
 n = 0.01
 
+
 # Statistics
 global failcount 
 failcount = 0
@@ -42,6 +43,7 @@ for row in df.itertuples():
     # Create output
     z = x.dot(w) + b
 
+    
     y = 1 if (z >= 0) else 0
 
     w = w + n * (rain - y) * x #type: ignore
@@ -71,7 +73,9 @@ try:
 except Exception as e:
     print(f"Failed to write weights to file: {e}")
 
-# Plot
+
+
+# Plot for analytics
 plt.figure(figsize=(10, 5))
 plt.plot(success_history, label="Successes", color="green")
 plt.plot(fail_history, label="Failures", color="red")
