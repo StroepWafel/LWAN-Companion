@@ -1,3 +1,4 @@
+import numpy as np
 import requests
 import pandas as pd
 
@@ -42,7 +43,11 @@ df = pd.DataFrame({
 })
 
 df["date"] = pd.to_datetime(df["date"])
-df["day_of_year"] = df["date"].dt.dayofyear
+
+day_of_year = df["date"].dt.dayofyear
+
+df["season_sin"] = np.sin(2 * np.pi * day_of_year / 365.0)
+df["season_cos"] = np.cos(2 * np.pi * day_of_year / 365.0)
 
 # Binary classification
 df["rain"] = (df["precipitation"] > 0.2).astype(int)
