@@ -41,8 +41,10 @@ df = pd.DataFrame({
     "precipitation": daily["precipitation_sum"]
 })
 
-# Convert to Binary classification 
-# 1 = rain, 0 = no rain
+df["date"] = pd.to_datetime(df["date"])
+df["day_of_year"] = df["date"].dt.dayofyear
+
+# Binary classification
 df["rain"] = (df["precipitation"] > 0.2).astype(int)
 
 # Remove missing values
@@ -61,8 +63,10 @@ for col in feature_columns:
     min_val = df[col].min()
     max_val = df[col].max()
 
-    df[col] = (df[col] - min_val) / (max_val - min_val)
-
+    if max_val != min_val:
+        df[col] = (df[col] - min_val) / (max_val - min_val)
+    else:
+        df[col] = 0.0
 
 # Print small sample
 print(df.head())
