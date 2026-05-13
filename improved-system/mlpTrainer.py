@@ -42,19 +42,28 @@ for epoch in range(epochs):
 
     for row in df.itertuples():
         # Inputs
-        temperature = row.temperature
-        humidity = row.humidity
-        pressure = row.pressure
-        wind_speed = row.wind_speed
+        x = np.array([row.temperature, row.humidity, row.pressure, row.wind_speed])
         # Expected output
         rain = row.rain
 
-        # Create vector x
-        x = np.array([temperature, humidity, pressure, wind_speed])
-        # Create output
-        z = x.dot(w) + b
+        # Forward Pass Mathematics
+        z1 = W1 @ x + b1                    # Matrix Vector for weighted sum
+        a1 = 1 / (1 + np.exp(-z1))          #  
+        z2 = W2 @ a1 + b2                   # 
+        yhat = 1 / (1 + np.exp(-z2))        # 
+        y = 1 if yhat >= 0.5 else 0         # 
 
-        
+        # Backward Pass Mathematics
+        d2 = yhat - rain #type: ignore      # 
+        d1 = (W2.T @ d2) * a1 * (1 - a1)    # 
+
+
+        # Weight Updates
+        W2 -= n * np.outer(d2, a1)          # 
+        b2 -= n * d2.item()                 # 
+        W1 -= n * np.outer(d1, x)           # 
+        b1 -= n * d1                        # 
+
         y = 1 if (z >= 0) else 0
 
         w = w + n * (rain - y) * x #type: ignore
@@ -67,10 +76,7 @@ for epoch in range(epochs):
         success_history.append(successcount)
         fail_history.append(failcount)
 
-        print(f"EPOCH {epoch+1} --- Predicted {'rain' if y else 'no rain'}, Expected {'rain' if rain else 'no rain'}.")
-
-
-print(f"Succeeded {successcount} times, Failed {failcount} times. Accuracy: {successcount/(successcount+failcount)}")
+    print(f"EPOCH {epoch+1}/{epochs} --- Accuracy: {successcount/(successcount+failcount):.4f}%")
 
 print("Saving final weights to file...")
 try:
