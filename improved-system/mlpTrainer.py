@@ -20,46 +20,54 @@ b2 = 0.0
 # Learning rate
 n = 0.01
 
+# Epoch count
+epochs = 100
 
-# Statistics
-global failcount 
-failcount = 0
-global successcount
-successcount = 0
 
-# Tracking over time
-success_history = []
-fail_history = []
+# # Statistics
+# global totalfailcount 
+# totalfailcount = 0
+# global totalsuccesscount
+# totalsuccesscount = 0
+# total_success_history = []
+# total_fail_history = []
+    
 
 # Train on every row of data
-for row in df.itertuples():
-    # Inputs
-    temperature = row.temperature
-    humidity = row.humidity
-    pressure = row.pressure
-    wind_speed = row.wind_speed
-    # Expected output
-    rain = row.rain
+for epoch in range(epochs):
+    successcount = 0
+    failcount = 0
+    success_history = []
+    fail_history = []
 
-    # Create vector x
-    x = np.array([temperature, humidity, pressure, wind_speed])
-    # Create output
-    z = x.dot(w) + b
+    for row in df.itertuples():
+        # Inputs
+        temperature = row.temperature
+        humidity = row.humidity
+        pressure = row.pressure
+        wind_speed = row.wind_speed
+        # Expected output
+        rain = row.rain
 
-    
-    y = 1 if (z >= 0) else 0
+        # Create vector x
+        x = np.array([temperature, humidity, pressure, wind_speed])
+        # Create output
+        z = x.dot(w) + b
 
-    w = w + n * (rain - y) * x #type: ignore
-    b = b + n * (rain - y) #type: ignore
-    if (rain == y):
-        successcount += 1
-    else:
-        failcount += 1
+        
+        y = 1 if (z >= 0) else 0
 
-    success_history.append(successcount)
-    fail_history.append(failcount)
+        w = w + n * (rain - y) * x #type: ignore
+        b = b + n * (rain - y) #type: ignore
+        if (rain == y):
+            successcount += 1
+        else:
+            failcount += 1
 
-    print(f"Predicted {'rain' if y else 'no rain'}, Expected {'rain' if rain else 'no rain'}. New weights: {w.tolist()}, New bias: {b}")
+        success_history.append(successcount)
+        fail_history.append(failcount)
+
+        print(f"EPOCH {epoch+1} --- Predicted {'rain' if y else 'no rain'}, Expected {'rain' if rain else 'no rain'}.")
 
 
 print(f"Succeeded {successcount} times, Failed {failcount} times. Accuracy: {successcount/(successcount+failcount)}")
