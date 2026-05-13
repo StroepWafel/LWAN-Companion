@@ -9,10 +9,13 @@ weightsfile = "improved-system\\weights.json"
 # Import data
 df = pd.read_csv(datafile)
 
-# Initialise weights
-b = 0
-global w
-w = np.array([0, 0, 0, 0])
+# Xavier bounds for each layer
+# W1: 4 inputs, 8 outputs -> n_in=4, n_out=8 -> sqrt(6/12)
+# W2: 8 inputs, 1 output  -> n_in=8, n_out=1 -> sqrt(6/9)
+W1 = np.random.uniform(-np.sqrt(6/12), np.sqrt(6/12), (8, 4))
+b1 = np.zeros(8)
+W2 = np.random.uniform(-np.sqrt(6/9), np.sqrt(6/9), (8, 4))
+b2 = 0.0
 
 # Learning rate
 n = 0.01
