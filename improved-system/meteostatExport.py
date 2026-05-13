@@ -6,8 +6,8 @@ LATITUDE = -34.92750
 LONGITUDE = 138.60000
 
 # Date range
-START_DATE = "2023-12-31"
-END_DATE = "2025-12-28"
+START_DATE = "2005-12-31"
+END_DATE = "2025-12-31"
 
 # Output
 datafile = "improved-system\\adelaide_weather_dataset.csv"
