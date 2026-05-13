@@ -3,21 +3,21 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Filepaths
-datafile = "improved-system\\adelaide_weather_testset.csv"
+datafile = "improved-system\\adelaide_weather_dataset.csv"
 weightsfile = "improved-system\\weights.json"
-weighting = {}
 
 # Import data
 df = pd.read_csv(datafile)
-try:
-    with open(weightsfile) as file:
-        weighting = json.load(file)
-except Exception as e:
-    print(f"Failed to load weights from file: {e}")
 
-w = np.array(weighting["weights"])
-b = weighting["bias"]
+# Initialise weights
+b = 0
+global w
+w = np.array([0, 0, 0, 0])
+
+# Learning rate
+n = 0.01
+
+
 # Statistics
 global failcount 
 failcount = 0
@@ -28,7 +28,7 @@ successcount = 0
 success_history = []
 fail_history = []
 
-# Predict weather
+# Train on every row of data
 for row in df.itertuples():
     # Inputs
     temperature = row.temperature
@@ -43,10 +43,11 @@ for row in df.itertuples():
     # Create output
     z = x.dot(w) + b
 
-    # Successful?
+    
     y = 1 if (z >= 0) else 0
 
-    # Increment counter
+    w = w + n * (rain - y) * x #type: ignore
+    b = b + n * (rain - y) #type: ignore
     if (rain == y):
         successcount += 1
     else:
@@ -55,11 +56,23 @@ for row in df.itertuples():
     success_history.append(successcount)
     fail_history.append(failcount)
 
-    # Log
-    print(f"Predicted: {'   rain' if y else 'no rain'}, Expected: {'   rain' if rain else 'no rain'}.")
+    print(f"Predicted {'rain' if y else 'no rain'}, Expected {'rain' if rain else 'no rain'}. New weights: {w.tolist()}, New bias: {b}")
 
 
 print(f"Succeeded {successcount} times, Failed {failcount} times. Accuracy: {successcount/(successcount+failcount)}")
+
+print("Saving final weights to file...")
+try:
+    export = {
+        "weights": w.tolist(),
+        "bias": b
+    }
+    with open(weightsfile, "w") as file:
+        json.dump(export, file)
+        print(f"Successfully saved weights {w.tolist()} and bias {b} to `{file.name}`")
+except Exception as e:
+    print(f"Failed to write weights to file: {e}")
+
 
 
 # Plot for analytics
@@ -68,7 +81,7 @@ plt.plot(success_history, label="Successes", color="green")
 plt.plot(fail_history, label="Failures", color="red")
 plt.xlabel("Row")
 plt.ylabel("Cumulative count")
-plt.title("Perceptron Inferring: Successes vs Failures Over Time")
+plt.title("Perceptron Training: Successes vs Failures Over Time")
 plt.legend()
 plt.tight_layout()
 plt.show()
