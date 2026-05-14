@@ -54,7 +54,9 @@ for epoch in range(epochs):
         # Forward Pass Mathematics
         z1 = W1 @ x + b1                    # Matrix Vector for weighted sum
         a1 = 1 / (1 + np.exp(-z1))          # Sigmoid activation for calculated vector
-        z2 = W2 @ a1 + b2                   # Matrix Vector for weighted sum - 2nd layer (output)
+        z2 = W2 @ a1 + b2                   # Matrix Vector for weighted sum - 2nd layer
+        a2 = 1 / (1 + np.exp(-z2))          # Sigmoid activation for second layer calculated vector
+        z3 = W3 @ a2 + b3                   # Matrix Vector for weighted sum - 3rd layer (output)
         yhat = 1 / (1 + np.exp(-z2))        # Sigmoid activation for calculated vector - 2nd layer (output)
         y = 1 if yhat >= 0.5 else 0         # Threshold for output/prediction (rain or no rain)
 
