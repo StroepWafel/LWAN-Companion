@@ -16,12 +16,15 @@ try:
 except Exception as e:
     print(f"Failed to load weights from file: {e}")
 
-w = np.array(weighting["weights"])
-b = weighting["bias"]
+W1 = np.array(weighting["W1"])
+b1 = np.array(weighting["b1"])
+W2 = np.array(weighting["W2"])
+b2 = np.array(weighting["b2"])
+W3 = np.array(weighting["W3"])
+b3 = weighting["b3"]
+
 # Statistics
-global failcount 
 failcount = 0
-global successcount
 successcount = 0
 
 # Tracking over time
@@ -30,24 +33,22 @@ fail_history = []
 
 # Predict weather
 for row in df.itertuples():
-    # Inputs
-    temperature = row.temperature
-    humidity = row.humidity
-    pressure = row.pressure
-    wind_speed = row.wind_speed
+    # Inputs (6 features)
+    x = np.array([row.temperature, row.humidity, row.pressure, row.wind_speed, row.season_sin, row.season_cos])
     # Expected output
     rain = row.rain
 
-    # Create vector x
-    x = np.array([temperature, humidity, pressure, wind_speed])
-    # Create output
-    z = x.dot(w) + b
-
-    # Successful?
-    y = 1 if (z >= 0) else 0
+    # Forward Pass Mathematics
+    z1 = W1 @ x + b1                    # Matrix Vector for weighted sum
+    a1 = 1 / (1 + np.exp(-z1))          # Sigmoid activation for calculated vector
+    z2 = W2 @ a1 + b2                   # Matrix Vector for weighted sum - 2nd layer
+    a2 = 1 / (1 + np.exp(-z2))          # Sigmoid activation for second layer calculated vector
+    z3 = W3 @ a2 + b3                   # Matrix Vector for weighted sum - 3rd layer (output)
+    yhat = 1 / (1 + np.exp(-z3))        # Sigmoid activation for calculated vector - 2nd layer (output)
+    y = 1 if yhat >= 0.5 else 0         # Threshold for output/prediction (rain or no rain)
 
     # Increment counter
-    if (rain == y):
+    if rain == y:
         successcount += 1
     else:
         failcount += 1
@@ -56,11 +57,9 @@ for row in df.itertuples():
     fail_history.append(failcount)
 
     # Log
-    print(f"Predicted: {'   rain' if y else 'no rain'}, Expected: {'   rain' if rain else 'no rain'}.")
+    print(f"Predicted: {'   rain' if y else 'no rain'} ({float(yhat):.2f}), Expected: {'   rain' if rain else 'no rain'}")
 
-
-print(f"Succeeded {successcount} times, Failed {failcount} times. Accuracy: {successcount/(successcount+failcount)}")
-
+print(f"Succeeded {successcount} times, Failed {failcount} times. Accuracy: {successcount/(successcount+failcount):.4f}")
 
 # Plot for analytics
 plt.figure(figsize=(10, 5))
@@ -68,7 +67,7 @@ plt.plot(success_history, label="Successes", color="green")
 plt.plot(fail_history, label="Failures", color="red")
 plt.xlabel("Row")
 plt.ylabel("Cumulative count")
-plt.title("Perceptron Inferring: Successes vs Failures Over Time")
+plt.title("MLP Inferring: Successes vs Failures Over Time")
 plt.legend()
 plt.tight_layout()
 plt.show()
