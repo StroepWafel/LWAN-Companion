@@ -57,9 +57,9 @@ for row in df.itertuples():
     fail_history.append(failcount)
 
     # Log
-    print(f"Predicted: {'   rain' if y else 'no rain'} ({float(yhat):.2f}), Expected: {'   rain' if rain else 'no rain'}")
+    print(f"Predicted: {'   rain' if y else 'no rain'}, Expected: {'   rain' if rain else 'no rain'}")
 
-print(f"Succeeded {successcount} times, Failed {failcount} times. Accuracy: {successcount/(successcount+failcount):.4f}")
+print(f"Succeeded {successcount} times, Failed {failcount} times. Accuracy: {100*successcount/(successcount+failcount):.4f}")
 
 # Plot for analytics
 plt.figure(figsize=(10, 5))
