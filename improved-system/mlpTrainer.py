@@ -40,14 +40,14 @@ global ratio_history
 accuracy_history = []
     
 # Early stopping settings
-min_epochs = 10        # don't stop before this
+min_epochs = 100        # don't stop before this
 patience = 10          # stop after this many epochs with no improvement
 best_accuracy = 0.0
 epochs_without_improvement = 0
 epoch = 0
 
 
-# Train on every row of data repeatedly until improvement stops
+# Train on every row of data repeatedly until stagnation
 while True:
     epoch += 1
     successcount = 0
@@ -93,10 +93,10 @@ while True:
     totalsuccesscount += failcount
     accuracy = successcount/(successcount+failcount)
     accuracy_history.append(accuracy)
-    print(f"EPOCH {epoch+1}/{epochs} --- Accuracy: {(accuracy):.4f}%")
+    print(f"EPOCH {epoch+1}/{epochs} --- Accuracy: {(accuracy*100):.4f}%")
 
     if epoch >= min_epochs:
-        if accuracy > best_accuracy:
+        if accuracy != best_accuracy:
             best_accuracy = accuracy
             epochs_without_improvement = 0
         else:
