@@ -57,17 +57,19 @@ for epoch in range(epochs):
         z2 = W2 @ a1 + b2                   # Matrix Vector for weighted sum - 2nd layer
         a2 = 1 / (1 + np.exp(-z2))          # Sigmoid activation for second layer calculated vector
         z3 = W3 @ a2 + b3                   # Matrix Vector for weighted sum - 3rd layer (output)
-        yhat = 1 / (1 + np.exp(-z2))        # Sigmoid activation for calculated vector - 2nd layer (output)
+        yhat = 1 / (1 + np.exp(-z3))        # Sigmoid activation for calculated vector - 2nd layer (output)
         y = 1 if yhat >= 0.5 else 0         # Threshold for output/prediction (rain or no rain)
 
         # Backward Pass Mathematics
-        d2 = yhat - rain #type: ignore      # Output delta (y^ - d)
-        d1 = (W2.T @ d2) * a1 * (1 - a1)    # Hidden layer delta calculation (δ^((1) )  =(W^((2) ) )^T δ^((2) )⊙a^((1) )⊙(1-a^((1) ) ))
-
+        d3 = yhat - rain #type: ignore      # Output delta (y^ - d)
+        d2 = (W3.T @ d3) * a2 * (1 - a2)    # Hidden layer 2 delta calculation (δ^((1) )  =(W^((2) ) )^T δ^((2) )⊙a^((1) )⊙(1-a^((1) ) ))
+        d1 = (W2.T @ d2) * a1 * (1 - a1)    # Hidden layer 1 delta calculation (δ^((1) )  =(W^((2) ) )^T δ^((2) )⊙a^((1) )⊙(1-a^((1) ) ))
 
         # Weight Updates
-        W2 -= n * np.outer(d2, a1)          # Update 2nd (output) layer weights
-        b2 -= n * d2.item()                 # Update 2nd (output) layer bias
+        W3 -= n * np.outer(d3, a2)          # Update 3rd (output) layer weights
+        b3 -= n * d3.item()                 # Update 3rd (output) layer bias
+        W2 -= n * np.outer(d2, a1)          # Update 2nd layer weights
+        b2 -= n * d2                        # Update 2nd layer bias
         W1 -= n * np.outer(d1, x)           # Update 1st layer weights
         b1 -= n * d1                        # Update 1st layer bias
 
@@ -91,10 +93,12 @@ try:
         "W1": W1.tolist(),
         "b1": b1.tolist(),
         "W2": W2.tolist(),
-        "b2": float(b2) #type: ignore 
+        "b2": b2.tolist(),
+        "W3": W3.tolist(),
+        "b3": float(b3) # type: ignore
     }
     with open(weightsfile, "w") as file:
-        json.dump(export, file)
+        json.dump(export, file, indent=2)
         print(f"Successfully saved weights to `{file.name}`")
 except Exception as e:
     print(f"Failed to write weights to file: {e}")
