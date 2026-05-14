@@ -95,7 +95,7 @@ try:
         "W2": W2.tolist(),
         "b2": b2.tolist(),
         "W3": W3.tolist(),
-        "b3": float(b3) # type: ignore
+        "b3": float(b3.real)
     }
     with open(weightsfile, "w") as file:
         json.dump(export, file, indent=2)
