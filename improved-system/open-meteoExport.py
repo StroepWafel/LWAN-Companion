@@ -76,6 +76,9 @@ for col in feature_columns:
 # Print small sample
 print(df.head())
 
+df["season_sin"] = df["season_sin"].round(10)
+df["season_cos"] = df["season_cos"].round(10)
+
 # Save dataset
 df.to_csv(datafile, index=False)
 

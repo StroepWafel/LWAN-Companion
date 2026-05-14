@@ -10,12 +10,15 @@ weightsfile = "improved-system\\weights.json"
 df = pd.read_csv(datafile)
 
 # Xavier bounds for each layer
-# W1: 4 inputs, 8 outputs -> n_in=4, n_out=8 -> sqrt(6/12)
-# W2: 8 inputs, 1 output  -> n_in=8, n_out=1 -> sqrt(6/9)
-W1 = np.random.uniform(-np.sqrt(6/12), np.sqrt(6/12), (8, 4))
+# W1: 6 inputs, 8 outputs  -> n_in=6, n_out=8 -> sqrt(6/14)
+# W2: 8 inputs, 8 outputs  -> n_in=8, n_out=8 -> sqrt(6/16)
+# W3: 8 inputs, 1 output   -> n_in=8, n_out=1 -> sqrt(6/9)
+W1 = np.random.uniform(-np.sqrt(6/14), np.sqrt(6/14), (8, 6))
 b1 = np.zeros(8)
-W2 = np.random.uniform(-np.sqrt(6/9), np.sqrt(6/9), (1, 8))
-b2 = 0.0
+W2 = np.random.uniform(-np.sqrt(6/16), np.sqrt(6/16), (8, 8))
+b2 = np.zeros(8)
+W3 = np.random.uniform(-np.sqrt(6/9), np.sqrt(6/9), (1, 8))
+b3 = 0.0
 
 # Learning rate
 n = 0.01
@@ -44,7 +47,7 @@ for epoch in range(epochs):
 
     for row in df.itertuples():
         # Inputs
-        x = np.array([row.temperature, row.humidity, row.pressure, row.wind_speed])
+        x = np.array([row.temperature, row.humidity, row.pressure, row.wind_speed, row.season_sin, row.season_cos])
         # Expected output
         rain = row.rain
 
