@@ -24,7 +24,7 @@ b3 = 0.0
 n = 0.01
 
 # Epoch count
-epochs = 250
+epochs = 9999
 
 
 # Statistics
