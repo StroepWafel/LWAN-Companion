@@ -13,7 +13,7 @@ df = pd.read_csv(datafile)
 # Define hidden layer sizes, input and output are automatic
 N_INPUTS = 6
 N_OUTPUTS = 1
-HIDDEN_LAYERS = [8, 10, 5, 6]  # change this to whatever you want
+HIDDEN_LAYERS = [8]  # change this to whatever you want
 
 # Build full layer size list: [n_inputs, h1, h2, ..., n_outputs]
 layer_sizes = [N_INPUTS] + HIDDEN_LAYERS + [N_OUTPUTS]
@@ -32,10 +32,10 @@ for i in range(len(layer_sizes) - 1):
     biases.append(b)
 
 # Learning rate
-n = 0.01
+n = 0.005
 
 # Early stopping settings
-min_epochs = 100
+min_epochs = 20
 patience = 10
 best_accuracy = 0.0
 epochs_without_improvement = 0
@@ -98,7 +98,7 @@ while True:
     print(f"EPOCH {epoch} --- Accuracy: {accuracy * 100:.4f}%")
 
     if epoch >= min_epochs:
-        if accuracy > best_accuracy:
+        if accuracy != best_accuracy:
             best_accuracy = accuracy
             epochs_without_improvement = 0
         else:
