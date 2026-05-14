@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 datafile = "improved-system\\adelaide_weather_dataset.csv"
-weightsfile = "improved-system\\weights.json"
+weightsfile = "improved-system\\longerweights.json"
 
 # Import data
 df = pd.read_csv(datafile)
