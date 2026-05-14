@@ -37,11 +37,19 @@ success_history = []
 global fail_history
 fail_history = []
 global ratio_history
-ratio_history = []
+accuracy_history = []
     
+# Early stopping settings
+min_epochs = 10        # don't stop before this
+patience = 10          # stop after this many epochs with no improvement
+best_accuracy = 0.0
+epochs_without_improvement = 0
+epoch = 0
 
-# Train on every row of data
-for epoch in range(epochs):
+
+# Train on every row of data repeatedly until improvement stops
+while True:
+    epoch += 1
     successcount = 0
     failcount = 0
 
@@ -83,9 +91,20 @@ for epoch in range(epochs):
 
     totalfailcount += successcount
     totalsuccesscount += failcount
-    print(f"EPOCH {epoch+1}/{epochs} --- Accuracy: {(100 * successcount)/(successcount+failcount):.4f}%")
-    ratio = successcount/(successcount+failcount)
-    ratio_history.append(ratio)
+    accuracy = successcount/(successcount+failcount)
+    accuracy_history.append(accuracy)
+    print(f"EPOCH {epoch+1}/{epochs} --- Accuracy: {(accuracy):.4f}%")
+
+    if epoch >= min_epochs:
+        if accuracy > best_accuracy:
+            best_accuracy = accuracy
+            epochs_without_improvement = 0
+        else:
+            epochs_without_improvement += 1
+            if epochs_without_improvement >= patience:
+                print(f"Early stopping at epoch {epoch} — no improvement for {patience} epochs")
+                break
+
 
 print("Saving final weights to file...")
 try:
@@ -117,7 +136,7 @@ plt.tight_layout()
 plt.show()
 
 plt.figure(figsize=(10, 5))
-plt.plot(ratio_history, label="Successes", color="blue")
+plt.plot(accuracy_history, label="Successes", color="blue")
 plt.xlabel("Epoch")
 plt.ylabel("Success Percent")
 plt.title("Perceptron Training: Success Percent Over Time")
