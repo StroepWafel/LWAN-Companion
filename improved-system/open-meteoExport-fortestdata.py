@@ -7,12 +7,11 @@ LATITUDE = -34.92750
 LONGITUDE = 138.60000
 
 # Date range
-START_DATE = "2005-12-31"
-END_DATE = "2025-12-31"
+START_DATE = "2026-01-01"
+END_DATE = "2026-05-31"
 
 # Output
-datafile = "improved-system\\adelaide_weather_dataset.csv"
-normstatsfile = "improved-system\\norm_stats.json"
+datafile = "improved-system\\adelaide_weather_testset.csv"
 
 url = (
     "https://archive-api.open-meteo.com/v1/archive?"
@@ -56,30 +55,6 @@ df["rain"] = (df["precipitation"] > 0.2).astype(int)
 # Remove missing values
 df = df.dropna()
 
-
-# Normalize numerical columns
-feature_columns = [
-    "temperature",
-    "humidity",
-    "pressure",
-    "wind_speed"
-]
-
-# After calculating min/max but before normalizing, save the stats
-norm_stats = {}
-for col in feature_columns:
-    min_val = df[col].min()
-    max_val = df[col].max()
-    norm_stats[col] = {"min": float(min_val), "max": float(max_val)}
-    if max_val != min_val:
-        df[col] = (df[col] - min_val) / (max_val - min_val)
-    else:
-        df[col] = 0.0
-
-# Save norm stats alongside the CSV
-import json
-with open(normstatsfile, "w") as f:
-    json.dump(norm_stats, f, indent=2)
 
 # Print small sample
 print(df.head())

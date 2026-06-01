@@ -16,6 +16,18 @@ try:
 except Exception as e:
     print(f"Failed to load weights from file: {e}")
 
+with open("improved-system\\genericWeightInferrer\\norm_stats.json") as f:
+    norm_stats = json.load(f)
+
+# Normalize a single entry before inference
+def normalize(value, col):
+    mn = norm_stats[col]["min"]
+    mx = norm_stats[col]["max"]
+    if mx != mn:
+        return (value - mn) / (mx - mn)
+    return 0.0
+
+
 W1 = np.array(weighting["W1"])
 b1 = np.array(weighting["b1"])
 W2 = np.array(weighting["W2"])
@@ -34,7 +46,14 @@ fail_history = []
 # Predict weather
 for row in df.itertuples():
     # Inputs (6 features)
-    x = np.array([row.temperature, row.humidity, row.pressure, row.wind_speed, row.season_sin, row.season_cos])
+    x = np.array([
+        normalize(row.temperature, "temperature"),
+        normalize(row.humidity, "humidity"),
+        normalize(row.pressure, "pressure"),
+        normalize(row.wind_speed, "wind_speed"),
+        row.season_sin,
+        row.season_cos
+        ])
     # Expected output
     rain = row.rain
 

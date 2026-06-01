@@ -96,7 +96,7 @@ while True:
     print(f"EPOCH {epoch+1}/{epochs} --- Accuracy: {(accuracy*100):.4f}%")
 
     if epoch >= min_epochs:
-        if accuracy != best_accuracy:
+        if accuracy > best_accuracy:
             best_accuracy = accuracy
             epochs_without_improvement = 0
         else:

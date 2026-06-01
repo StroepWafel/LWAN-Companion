@@ -11,8 +11,8 @@ START_DATE = "2005-12-31"
 END_DATE = "2025-12-31"
 
 # Output
-datafile = "improved-system\\adelaide_weather_dataset.csv"
-normstatsfile = "improved-system\\norm_stats.json"
+datafile = "improved-system\\genericWeightInferrer\\adelaide_weather_dataset.csv"
+normstatsfile = "improved-system\\genericWeightInferrer\\norm_stats.json"
 
 url = (
     "https://archive-api.open-meteo.com/v1/archive?"
@@ -56,13 +56,16 @@ df["rain"] = (df["precipitation"] > 0.2).astype(int)
 # Remove missing values
 df = df.dropna()
 
+# Add yesterday's rain as a feature
+df['rain_yesterday'] = df['precipitation'].shift(1).fillna(0)
 
 # Normalize numerical columns
 feature_columns = [
     "temperature",
     "humidity",
     "pressure",
-    "wind_speed"
+    "wind_speed",
+    "rain_yesterday"
 ]
 
 # After calculating min/max but before normalizing, save the stats
@@ -80,7 +83,6 @@ for col in feature_columns:
 import json
 with open(normstatsfile, "w") as f:
     json.dump(norm_stats, f, indent=2)
-
 # Print small sample
 print(df.head())
 

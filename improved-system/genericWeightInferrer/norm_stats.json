@@ -1,0 +1,22 @@
+{
+  "temperature": {
+    "min": 7.0,
+    "max": 36.0
+  },
+  "humidity": {
+    "min": 11.0,
+    "max": 95.0
+  },
+  "pressure": {
+    "min": 987.7,
+    "max": 1037.1
+  },
+  "wind_speed": {
+    "min": 3.7,
+    "max": 46.5
+  },
+  "rain_yesterday": {
+    "min": 0.0,
+    "max": 50.7
+  }
+}
